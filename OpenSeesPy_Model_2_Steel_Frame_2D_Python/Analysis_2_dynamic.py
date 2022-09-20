@@ -71,6 +71,12 @@ g = 9.81
 # Input parameters
 # =============================================================================
 
+st = 2
+
+if st == 2:
+    ACC_Nodes = [20,30]
+elif st == 1:
+    ACC_Nodes = [20]
 
 H1 = 3.5*m        # height first floor
 L1 = 5.5*m        #m      length first span 
@@ -89,7 +95,7 @@ load_dat_file = 'el_centro.dat'
 # # call function to create the model
 # =============================================================================
 
-createModel(H1,L1,M)
+createModel(H1,L1,M, st)
 
 if plot_model:
     plt.figure()
@@ -191,6 +197,12 @@ ops.recorder('Element', '-file', output_directory+'/2_groundmotion_section_force
 
 
 
+for nodes in ACC_Nodes:
+    ops.recorder('Node', '-file', output_directory+'/2_Acc_x_' + str(nodes) +'.out',
+                 '-time', '-node', nodes,  '-dof', 1,  'accel')
+
+
+
 
 # Define dynamic load (ground motion) in the horizontal direction
 # ------------------
@@ -267,7 +279,86 @@ plt.ylabel('Moment (kN)')
 plt.grid()
 plt.show()
 
+#%% Estimate entropy
 
+import DamageTools
+
+print('DAMAGE LABEL -----------------------------------------------------------')
+print('Load factor: ', loadfactor)
+print()
+
+for nodes in ACC_Nodes:
+    time_Acc_x_XX = np.loadtxt(output_directory+'/2_Acc_x_' + str(nodes) +'.out')
+
+    ACC_x_XX = time_Acc_x_XX[:,1]
+
+    entropy = DamageTools.SampEn(ACC_x_XX, 2, 0.2*np.std(ACC_x_XX))
+    print('Entropy Node_%d: ' % nodes, round(entropy,4))
+
+
+
+
+# UnDamaged: 
+# loadlevel: 1
+#  E = 210          E = 150
+#  20:  0.1496      :0.1325
+#  30:  0.1220      :0.1009
+
+
+# UnDamaged: 
+# loadlevel: 5
+#  E = 210          E = 150
+#  20:  0.1496      :0.1325
+#  30:  0.1220      :0.1009
+    
+    
+# UnDamaged: 
+# loadlevel: 7
+#  E = 210          E = 150
+#  20:  0.1496      :0.1326
+#  30:  0.1222      :0.1009
+    
+    
+    
+# Damaged: 
+# loadlevel: 10
+#  E = 210          E = 150
+#  20:  0.1664        :0.134
+#  30:  0.1349        :0.1019
+    
+    
+    
+# Damaged: 
+# loadlevel: 25
+#  E = 210          E = 150
+#  20:  0.2731        :0.2069
+#  30:  0.2311        :0.1772
+    
+    
+    
+# Damaged: 
+# loadlevel: 50
+#  E = 210          E = 150
+#  20:  0.2855        :0.2337
+#  30:  0.2731        :0.2175
+
+import sys
+sys.exit()
+#%%
+
+# Define data values
+x = [7, 14, 21, 28, 35, 42, 49]
+y = [5, 12, 19, 21, 31, 27, 35]
+z = [3, 5, 11, 20, 15, 29, 31]
+
+# Plot a simple line chart
+plt.plot(x, y, label = 'Test')
+
+# Plot another line on the same chart/graph
+plt.plot(x, z)
+plt.grid()
+plt.legend(loc = 'best')
+plt.show()
 
 
 
