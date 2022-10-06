@@ -55,7 +55,8 @@ kg = 1
 
 H1 = 3.5*m        # height first floor
 L1 = 5.5*m        #m      length first span 
-M = 6000 *kg 	  #kg		lumped mass at top corner nodes 
+
+M = [4100, 2800 , 5300, 3300] *kg 	  #kg		lumped mass at top corner nodes - excel calculation
 
 section_n = 5   # number of sections in 1 element
 
