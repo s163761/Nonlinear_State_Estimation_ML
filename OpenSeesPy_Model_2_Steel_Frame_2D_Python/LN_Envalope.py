@@ -62,8 +62,18 @@ plt.grid()
 plt.xlabel('Energy')
 plt.ylabel('Elasic deformation (residual rotation)')
 plt.axvline(energy_thr, linewidth=1, linestyle='--', c='k')
-        
+   
+#%% Counting
 
+num_L = (df_LN.values == 'L').sum()
+num_N = (df_LN.values == 'N').sum()
+num_T = num_L + num_N
+
+print(f'L/N: {num_L}/{num_N}')
+print(f'Rat L/N: {round(num_L/num_T,4)}/{round(num_N/num_T,4)}')
+
+#%%
+df_LN.to_pickle(folder_structure + "/00_LN_Envalope.pkl") 
 
 sys.exit()
 # Results from Damage Index

@@ -240,6 +240,65 @@ for rdirs, dirs, files in os.walk(folder_accs):
                     df_Close_Error['MAE'][idx][struc_nodes[j-1]][struc_nodes[i-1]] = MAE
                     df_Close_Error['TRAC'][idx][struc_nodes[j-1]][struc_nodes[i-1]] = TRAC
                     
-#%%                
+#%%         Save DataFrame        
 df_Close_Error.to_pickle(folder_structure + "/00_df_Close_Error.pkl")
-                
+       
+#%% Load DaraFRame
+df_Close_Error = pd.read_pickle( os.path.join(folder_structure, '00_df_Close_Error.pkl') ) 
+
+#%% Add DataFrame
+
+Errors = ['RMSE', 'SMSE', 'MAE', 'TRAC']
+df_Error_mean = pd.DataFrame( columns = Errors, index = [0])
+
+for error in Errors:
+    #error = 'TRAC'
+    
+    df_sum_error = df_Close_Error[error][0]
+    len_sum_error = len(df_Close_Error.index)
+    
+    for i in df_Close_Error.index[1:]:
+        df_sum_error = df_sum_error.add(df_Close_Error[error][i])
+    df_sum_error = df_sum_error / len_sum_error
+
+    df_Error_mean[error][0] = df_sum_error
+
+#%% Save DataFrame
+df_Error_mean.to_pickle(folder_structure + "/00_df_Close_Error_Mean.pkl")
+
+#%% Load DataFrame
+df_Error_mean = pd.read_pickle( os.path.join(folder_structure, '00_df_Close_Error_Mean.pkl') ) 
+
+#%% Heat Map
+Errors = ['RMSE', 'SMSE', 'MAE', 'TRAC']
+for error in Errors:
+    #error = 'RMSE'
+    fig = plt.figure(figsize =(8, 7))#; ax = fig.add_subplot(111)
+    
+    df = df_Error_mean[error][0]
+    plt.pcolor(df)
+    
+    plt.yticks(np.arange(0.5, len(df.index), 1), df.index)
+    plt.xticks(np.arange(0.5, len(df.columns), 1), df.columns)
+    plt.colorbar(label=f'{error} Mean')
+    
+    # Loop over data dimensions and create text annotations.
+    for i in range(len(df.index)):
+        for j in range(len(df.columns)):
+            if round(df.iloc[j,i],2) > 0.9:
+                text = plt.text(j+0.5, i+0.5, round(df.iloc[j,i],2),
+                               ha="center", va="center", color="k", fontsize='small')#, transform = ax.transAxes)
+            else:
+                text = plt.text(j+0.5, i+0.5, round(df.iloc[j,i],2),
+                               ha="center", va="center", color="w", fontsize='small')#, transform = ax.transAxes)
+                    
+    
+    plt.xticks(rotation = 45) # Rotates X-Axis Ticks by 45-degrees
+    
+    plt.suptitle(f'Error Heat Map - OpenSees \n {error} Error' )
+    plt.xlabel('Testing Nodes')
+    plt.ylabel('Training Nodes')
+    #plt.show()
+    
+    plt.savefig(os.path.join(folder_structure, f'ErrorMap_OpenSees_{error}.png'))
+    #plt.close()

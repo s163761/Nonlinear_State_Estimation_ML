@@ -108,7 +108,7 @@ folder_accs = r'output_files\ACCS'
 
 folder_structure = r'output_files'
 
-folder_figure_save = r'output_files\Testing\Test_random'
+folder_figure_save = r'output_files\Figures_Singular_296'
 
 #%% Load Structure
 Structure = pd.read_pickle( os.path.join(folder_structure, '00_Structure.pkl') )
@@ -798,7 +798,7 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
                  alpha=0.3, linewidth=3, label='True')
         
         
-        SampEn_acc = DamageTools.SampEn(acc, 2, 0.2*np.std(acc))
+        #SampEn_acc = DamageTools.SampEn(acc, 2, 0.2*np.std(acc))
         # Predict
         mus_temp = mus_EQ
         x_temp = (np.arange(0,len(mus_temp)) *length_step*0.02) + (length_subvec*0.02)
@@ -809,9 +809,9 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         ax[0].plot(x_temp, mus_temp, 
                  alpha=0.8, label='Predicted')
         
-        SampEn_mus = DamageTools.SampEn(mus_temp, 2, 0.2*np.std(mus_temp))
+        #SampEn_mus = DamageTools.SampEn(mus_temp, 2, 0.2*np.std(mus_temp))
         
-        print(SampEn_acc, SampEn_mus)
+        #print(SampEn_acc, SampEn_mus)
         # ax[0].plot(x_temp, sigma_i_temp, 
         #          alpha=0.8, label='SD')
         
@@ -1084,12 +1084,14 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
 # Training data ---------------------------------------------------------------
 Train_data, Test_data = random_str_list(Index_Results, Train_procent = .015)
 
+
+#%%
+a = r'C:\Users\s163761\Documents\GitHub\Thesis_Nonlinear-Damage-Detection\OpenSeesPy_Model_2_Steel_Frame_2D_Python\output_files\Figures_Singular_296\Pred_node20_IN5_OUT296_Time2022-11-07_17-36-36'
+
+unpickled_df = pd.read_pickle(os.path.join(a, '00_Basis.pkl'))
 # Indicator if total time n
 #load_IDs = Train_data # 0.015 --> 5
-load_IDs = ['108', '001', '231', '079', '251']
-#,  '094',  '250',  '138',  
-#             # '156',  '251',  '248',  '073',  '163',  '025',  '258',  '249',  
-#             # '130',  '098',  '040',  '078',  '297',  '012']
+load_IDs = unpickled_df['IN_EQs'][0]
 
 # Training - X                                                                                 
 load_Nodes_X = [21, 23] # Indicator of dimension d
@@ -1101,13 +1103,13 @@ load_Nodes_Y = [22]
 Train_par=[load_IDs, load_Nodes_X, load_Nodes_Y]
 
 
-
+#%%
 # Testing Data ----------------------------------------------------------------
 
 # Indicator if total time m
 #load_IDss = Test_data # 20
-load_IDss = ['202', '143']
-#load_IDss = ['023']  
+load_IDss = unpickled_df['OUT_EQs'][0]
+
 # load_IDss = int_to_str3(Index_Results.index.tolist())
 # for i in load_IDs:
 #     load_IDss.remove(i)
@@ -1125,10 +1127,10 @@ Test_par=[load_IDss, load_Nodes_Xs, load_Nodes_Ys]
 
 #Creation of sub-vecors W -----------------------------------------------------
 # Length of sub-vectors
-length_subvec = 10
+length_subvec = 25
 
 # Overlaping parameter (number of new values in sub-vector)
-length_step = 3
+length_step = 5
 W_par=[length_subvec, length_step]
 
 
@@ -1154,21 +1156,23 @@ if False:
 #%% RUN Analysis
 
 #------------------------------------------------------------------------------ 
-# Diff_Nodes = [20, 21, 22, 23, 30, 31, 32, 33, 40, 41, 42, 43]
+Diff_Nodes = [20, 21, 22, 23, 30, 31, 32, 33, 40, 41, 42, 43]
 
-# #for load_Nodes_X_el in [23]:
-# for load_Nodes_Y_el in Diff_Nodes[8:]: # Pred_Node
-
-#     load_Nodes_X = [23]# [load_Nodes_X_el]
-#     load_Nodes_Y = [load_Nodes_Y_el]
-#     print(load_Nodes_X, load_Nodes_Y)
+for load_Nodes_X_el in [43]:
+    for load_Nodes_Y_el in [33, 40, 41, 42, 43]: # Pred_Node
     
-#     GPR(W_par=[length_subvec, length_step], 
-#             Ker_par=[sigma2_ks, tau2_ks, sigma2_error], 
-#             Train_par=[load_IDs, load_Nodes_X, load_Nodes_Y], 
-#             Test_par=[load_IDss, load_Nodes_X, load_Nodes_Y])
+        load_Nodes_X = [43] #[load_Nodes_X_el]
+        load_Nodes_Y = [load_Nodes_Y_el]
+        print(load_Nodes_X, load_Nodes_Y)
+        
+        GPR(W_par=[length_subvec, length_step], 
+                Ker_par=[sigma2_ks, tau2_ks, sigma2_error], 
+                Train_par=[load_IDs, load_Nodes_X, load_Nodes_Y], 
+                Test_par=[load_IDss, load_Nodes_X, load_Nodes_Y])
    
-    
+sys.exit() 
+
+   
 Diff_Nodes = [22, 32, 42, 23, 33, 43]
 
 #for load_Nodes_X_el in [23]:

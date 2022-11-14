@@ -41,7 +41,7 @@ def unique_cols(df):
     return (a[0] == a).all(0)
 
 #%% Folder structure
-folder_data = r'output_files\Figures_Singular'
+folder_data = r'output_files\Figures_Singular_296'
 
 
 #%% INPUTS
@@ -130,7 +130,7 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
         train = 'Diff'
     
     
-    #%% 
+    #%%  BOX-PLOT
     df = df_Error
     # Plot bloxplot
     fig, ax = plt.subplots(nrows=df.shape[0], ncols=1, figsize =(10, 10), sharex=True)
@@ -196,7 +196,7 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
     
     #%% Plot ErrorMap
     if plot_ErrorMap:
-        plt.figure()
+        plt.figure(figsize =(8, 7))
         plt.pcolor(df_ErrorMap.values.tolist())
         plt.yticks(np.arange(0.5, len(df_ErrorMap.index), 1), df_ErrorMap.index)
         plt.xticks(np.arange(0.5, len(df_ErrorMap.columns), 1), df_ErrorMap.columns)
@@ -210,6 +210,18 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
         plt.axhline(y=8, ls='--', linewidth=1, color='black')
         
         plt.xticks(rotation = 45) # Rotates X-Axis Ticks by 45-degrees
+        
+        
+        # Loop over data dimensions and create text annotations.
+        for i in range(len(df_ErrorMap.index)):
+            for j in range(len(df_ErrorMap.columns)):
+                if round(df_ErrorMap.iloc[j,i],2) > 0.8:
+                    text = plt.text(j+0.5, i+0.5, round(df_ErrorMap.iloc[j,i],2),
+                                   ha="center", va="center", color="k", fontsize='small')#, transform = ax.transAxes)
+                else:
+                    text = plt.text(j+0.5, i+0.5, round(df_ErrorMap.iloc[j,i],2),
+                                   ha="center", va="center", color="w", fontsize='small')#, transform = ax.transAxes)
+                
         
         plt.suptitle( f'Error Heat Map - IN: {num_in}, OUT: {num_out} \n TRAC Error' )
         plt.xlabel('Testing Nodes')
@@ -245,7 +257,7 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
                 #print(i)
                 true_idx.append(i)
         
-        #for i in [0,1,2,3,4]:        
+        #for i in [0,1,2,3,4]:  --> ['RMSE', 'SMSE', 'MAE', 'MAPE' , 'TRAC']      
             #print(mean(sum(df_Error[true_idx].values.tolist()[4], [])))
         df_map[f'Pred_{prediction_node}'][in_node] = mean(sum(df_Error[true_idx].values.tolist()[4], []))
             
@@ -258,6 +270,6 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
 Struc_Nodes = [20, 21, 22, 23, 30, 31, 32, 33, 40, 41, 42, 43]
 
 for Node in Struc_Nodes:
-    GenError(Node, EQ_IN_OUT=[5,2], plot_ErrorMap=False)
-    
-GenError(20, EQ_IN_OUT=[5,2], plot_ErrorMap=True)
+    GenError(Node, EQ_IN_OUT=[5,296], plot_ErrorMap=False)
+#%%
+GenError(20, EQ_IN_OUT=[5,296], plot_ErrorMap=True)
