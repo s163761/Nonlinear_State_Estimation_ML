@@ -1,0 +1,62 @@
+Start time: 2022-11-10 19:19:14
+Sub-vector parameters: Length = 25, Step = 5
+Hyper-parameters: Scale_Factor = 1, Length_Factor = 1, Error_Factor = 0 
+
+Determine Kernel @ 2022-11-10 19:19:24
+Subvector length: 25
+Number of sensors: 1
+Duration [sec]: 0.0652 - [min]: 0.0011 - [hrs]: 0.0 
+
+Determine Model @ 2022-11-10 19:19:24
+Non-optimized model 
+Name : GP regression
+Objective : 3089.3318748195225
+Number of Parameters : 3
+Number of Optimization Parameters : 3
+Updates : True
+Parameters:
+  [1mGP_regression.         [0;0m  |  value  |  constraints  |  priors
+  [1mrbf.variance           [0;0m  |    1.0  |      +ve      |        
+  [1mrbf.lengthscale        [0;0m  |    1.0  |      +ve      |        
+  [1mGaussian_noise.variance[0;0m  |    1.0  |      +ve      |         
+
+--Optimize Model @ 2022-11-10 19:19:25
+Running L-BFGS-B (Scipy implementation) Code:
+  runtime   i      f              |g|        
+    00s00  0000   3.089332e+03           nan     01s10  0001   3.089332e+03   2.731799e+05     02s33  0002   2.485452e+03   4.423094e+05     03s37  0003  -3.376517e+02   7.746386e+05 
+    04s91  0005   1.150209e+05   6.304035e+06     06s46  0007  -1.061872e+04   1.625426e+05     07s95  0009  -1.084616e+04   1.171664e+04     09s40  0011  -1.088865e+04   8.421188e+03     10s81  0013  -1.101773e+04   4.215955e+02 
+    12s25  0015  -1.108235e+04   2.200341e+04     13s70  0017  -1.112201e+04   9.721431e+01     15s18  0019  -1.113862e+04   2.811767e+03     16s63  0021  -1.114852e+04   2.034234e+02     18s05  0023  -1.115133e+04   7.892553e+01     19s50  0025  -1.115214e+04   1.514029e-01     20s92  0027  -1.115182e+04   3.100705e+02     22s40  0029  -1.115218e+04   1.379791e-04 
+    23s90  0031  -1.115218e+04   1.033405e-04     25s31  0033  -1.115218e+04   1.256137e-04     26s78  0035  -1.115218e+04   1.369815e-04     28s25  0037  -1.115218e+04   2.192606e-03     29s68  0039  -1.115218e+04   1.393013e-04     31s11  0041  -1.115218e+04   1.256137e-04     32s55  0043  -1.115218e+04   1.256137e-04     33s98  0045  -1.115218e+04   1.256137e-04     35s46  0047  -1.115218e+04   1.256137e-04     36s92  0049  -1.115218e+04   1.256137e-04     38s41  0051  -1.115218e+04   1.256137e-04 
+    40s00  0053  -1.115218e+04   1.352119e-05     41s45  0055  -1.115218e+04   1.256137e-04     42s88  0057  -1.115218e+04   1.256137e-04     44s30  0059  -1.115218e+04   1.256137e-04     45s74  0061  -1.115218e+04   1.256137e-04     47s18  0063  -1.115218e+04   1.256137e-04     48s63  0065  -1.115218e+04   1.256137e-04     49s35  0066  -1.115218e+04   1.256137e-04 
+Runtime:     49s35
+Optimization status: ErrorABNORMAL_TERMINATION_IN_LNSRCH
+
+Optimize using scg
+Running Scaled Conjugate Gradients Code:
+  runtime   i      f              |g|        
+    00s00  0000  -1.115218e+04   1.256137e-04     01s46  0002  -1.115218e+04   1.256137e-04     02s89  0004  -1.115214e+04   1.380834e-04     04s35  0006  -1.115218e+04   1.380834e-04     05s82  0008  -1.115218e+04   1.380834e-04 
+    07s25  0010  -1.115218e+04   1.380834e-04     08s67  0012  -1.115218e+04   1.380834e-04     10s11  0014  -1.115218e+04   1.380834e-04     11s64  0016  -1.115218e+04   1.380834e-04     13s22  0018  -1.115218e+04   1.380834e-04 
+Runtime:     13s22
+Optimization status: converged - relative reduction in objective
+
+Optimized model 
+ 
+Name : GP regression
+Objective : -11152.179380543499
+Number of Parameters : 3
+Number of Optimization Parameters : 3
+Updates : True
+Parameters:
+  [1mGP_regression.         [0;0m  |                  value  |  constraints  |  priors
+  [1mrbf.variance           [0;0m  |       67.7229134769206  |      +ve      |        
+  [1mrbf.lengthscale        [0;0m  |      38.85229329091124  |      +ve      |        
+  [1mGaussian_noise.variance[0;0m  |  6.458249343436119e-07  |      +ve      |        
+Duration [sec]: 65.0336 - [min]: 1.0839 - [hrs]: 0.0181 
+
+Plotting Routine
+------------------------------------------------- 
+
+End time: 309.2169 [s]
+-- [min]:  5.1536 [min]
+-- [hrs]:  0.0859 [hrs]
+
