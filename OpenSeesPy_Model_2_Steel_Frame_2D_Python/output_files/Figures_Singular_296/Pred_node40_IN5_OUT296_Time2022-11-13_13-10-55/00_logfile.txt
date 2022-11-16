@@ -1,0 +1,62 @@
+Start time: 2022-11-13 13:10:55
+Sub-vector parameters: Length = 25, Step = 5
+Hyper-parameters: Scale_Factor = 1, Length_Factor = 1, Error_Factor = 0 
+
+Determine Kernel @ 2022-11-13 13:11:04
+Subvector length: 25
+Number of sensors: 1
+Duration [sec]: 0.011 - [min]: 0.0002 - [hrs]: 0.0 
+
+Determine Model @ 2022-11-13 13:11:04
+Non-optimized model 
+Name : GP regression
+Objective : 3676.7396084204915
+Number of Parameters : 3
+Number of Optimization Parameters : 3
+Updates : True
+Parameters:
+  [1mGP_regression.         [0;0m  |  value  |  constraints  |  priors
+  [1mrbf.variance           [0;0m  |    1.0  |      +ve      |        
+  [1mrbf.lengthscale        [0;0m  |    1.0  |      +ve      |        
+  [1mGaussian_noise.variance[0;0m  |    1.0  |      +ve      |         
+
+--Optimize Model @ 2022-11-13 13:11:06
+Running L-BFGS-B (Scipy implementation) Code:
+  runtime   i      f              |g|        
+    00s00  0000   3.676740e+03           nan     01s61  0002   3.131833e+03   3.900344e+05     03s11  0004  -5.227527e+03   3.704450e+04     04s86  0006   5.486832e+03   2.334261e+03 
+    06s32  0008  -1.228354e+04   2.351425e+04     07s76  0010  -1.266977e+04   8.111211e+01     09s19  0012  -1.267161e+04   3.621107e+00     10s65  0014  -1.267206e+04   7.624266e+00     12s08  0016  -1.267289e+04   3.639551e+00 
+    13s51  0018  -1.267319e+04   7.064240e-02     15s03  0020  -1.267327e+04   2.104832e-01     16s53  0022  -1.267352e+04   2.602130e-02     17s96  0024  -1.267354e+04   2.222098e-02     19s39  0026  -1.267300e+04   1.729429e+01     20s85  0028  -1.267354e+04   2.509746e-02     22s28  0030  -1.267354e+04   2.413850e-02     23s71  0032  -1.267354e+04   2.428113e-02     25s19  0034  -1.267354e+04   5.330638e-02     26s61  0036  -1.267354e+04   2.418386e-02     28s10  0038  -1.267354e+04   2.428113e-02     29s57  0040  -1.267354e+04   2.428113e-02     31s05  0042  -1.267354e+04   2.428113e-02     32s67  0044  -1.267354e+04   2.428113e-02     34s16  0046  -1.267354e+04   2.428113e-02     35s59  0048  -1.267329e+04   1.101402e+01     37s04  0050  -1.267354e+04   1.945743e-02 
+    38s47  0052  -1.267354e+04   2.410058e-02     39s90  0054  -1.267354e+04   2.421876e-02     41s35  0056  -1.267354e+04   2.416325e-02     42s79  0058  -1.267354e+04   2.405580e-02     44s26  0060  -1.267354e+04   2.414434e-02     45s71  0062  -1.267354e+04   2.428113e-02     46s41  0063  -1.267354e+04   2.428113e-02 
+Runtime:     46s41
+Optimization status: ErrorABNORMAL_TERMINATION_IN_LNSRCH
+
+Optimize using scg
+Running Scaled Conjugate Gradients Code:
+  runtime   i      f              |g|        
+    00s00  0000  -1.267354e+04   2.428113e-02 
+    01s49  0002  -1.267354e+04   2.428113e-02     02s94  0004  -1.267354e+04   2.410008e-02     04s35  0006  -1.267354e+04   2.410008e-02     05s80  0008  -1.267354e+04   2.410008e-02     07s22  0010  -1.267354e+04   2.410008e-02 
+    08s65  0012  -1.267354e+04   2.410008e-02     10s13  0014  -1.267354e+04   2.410008e-02     11s61  0016  -1.267354e+04   2.410008e-02     13s02  0018  -1.267354e+04   2.410008e-02     14s44  0020  -1.267354e+04   2.410008e-02     15s91  0022  -1.267354e+04   2.410008e-02     17s43  0024  -1.267354e+04   2.410008e-02     18s87  0026  -1.267354e+04   2.410008e-02     20s31  0028  -1.267354e+04   2.410008e-02 
+Runtime:     20s31
+Optimization status: converged - relative reduction in objective
+
+Optimized model 
+ 
+Name : GP regression
+Objective : -12673.541365411786
+Number of Parameters : 3
+Number of Optimization Parameters : 3
+Updates : True
+Parameters:
+  [1mGP_regression.         [0;0m  |                  value  |  constraints  |  priors
+  [1mrbf.variance           [0;0m  |     29.230622137794256  |      +ve      |        
+  [1mrbf.lengthscale        [0;0m  |      24.91658277740432  |      +ve      |        
+  [1mGaussian_noise.variance[0;0m  |  1.972578454459356e-12  |      +ve      |        
+Duration [sec]: 69.5043 - [min]: 1.1584 - [hrs]: 0.0193 
+
+Plotting Routine
+------------------------------------------------- 
+
+End time: 260.2574 [s]
+-- [min]:  4.3376 [min]
+-- [hrs]:  0.0723 [hrs]
+
