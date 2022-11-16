@@ -1,0 +1,53 @@
+Start time: 2022-11-10 20:15:35
+Sub-vector parameters: Length = 25, Step = 5
+Hyper-parameters: Scale_Factor = 1, Length_Factor = 1, Error_Factor = 0 
+
+Determine Kernel @ 2022-11-10 20:15:47
+Subvector length: 25
+Number of sensors: 1
+Duration [sec]: 0.0621 - [min]: 0.001 - [hrs]: 0.0 
+
+Determine Model @ 2022-11-10 20:15:47
+Non-optimized model 
+Name : GP regression
+Objective : 2728.700704854679
+Number of Parameters : 3
+Number of Optimization Parameters : 3
+Updates : True
+Parameters:
+  [1mGP_regression.         [0;0m  |  value  |  constraints  |  priors
+  [1mrbf.variance           [0;0m  |    1.0  |      +ve      |        
+  [1mrbf.lengthscale        [0;0m  |    1.0  |      +ve      |        
+  [1mGaussian_noise.variance[0;0m  |    1.0  |      +ve      |         
+
+--Optimize Model @ 2022-11-10 20:15:48
+Running L-BFGS-B (Scipy implementation) Code:
+  runtime   i      f              |g|        
+    00s00  0000   2.728701e+03           nan     01s82  0001   2.728701e+03   2.416614e+05     03s35  0003  -4.756672e+02   4.032471e+05     04s82  0005   4.837047e+03   4.807454e+07     06s32  0007   2.706278e+05   4.749878e+10     07s76  0009  -1.144206e+03   4.545993e+05 
+    09s25  0011  -1.820041e+03   2.868694e+03     10s67  0013  -1.847770e+03   9.131475e+03     12s12  0015  -1.866916e+03   2.727539e+02     13s63  0017  -1.873321e+03   1.403914e+02     15s06  0019  -1.874869e+03   7.376488e+01     16s59  0021  -1.875207e+03   9.135364e+00 
+    18s05  0023  -1.875224e+03   2.624299e-02 
+    19s54  0025  -1.875225e+03   7.887271e-06     20s25  0026  -1.875225e+03   7.887271e-06 
+Runtime:     20s25
+Optimization status: Converged
+
+Optimized model 
+ 
+Name : GP regression
+Objective : -1875.2245546951667
+Number of Parameters : 3
+Number of Optimization Parameters : 3
+Updates : True
+Parameters:
+  [1mGP_regression.         [0;0m  |                 value  |  constraints  |  priors
+  [1mrbf.variance           [0;0m  |    10.512888951762553  |      +ve      |        
+  [1mrbf.lengthscale        [0;0m  |     4.476000667801385  |      +ve      |        
+  [1mGaussian_noise.variance[0;0m  |  0.000864836412193342  |      +ve      |        
+Duration [sec]: 21.8642 - [min]: 0.3644 - [hrs]: 0.0061 
+
+Plotting Routine
+------------------------------------------------- 
+
+End time: 2298.1728 [s]
+-- [min]:  38.3029 [min]
+-- [hrs]:  0.6384 [hrs]
+
