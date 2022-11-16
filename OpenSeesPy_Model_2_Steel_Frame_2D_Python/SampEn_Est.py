@@ -276,6 +276,25 @@ for error in Errors:
     fig = plt.figure(figsize =(8, 7))#; ax = fig.add_subplot(111)
     
     df = df_Error_mean[error][0]
+    
+    # Create symetrical df-----------------------------------------------------
+    df_plot = df.to_numpy()
+    
+    # List of elemnts
+    v = df_plot[np.triu_indices(df_plot.shape[0], k = 0)]
+    #print(v)
+    # [1 2 3 5 6 9]
+    
+    # put it back into a 2D symmetric array
+    size_X = df.shape[0]
+    X = np.zeros((size_X,size_X))
+    X[np.triu_indices(X.shape[0], k = 0)] = v
+    X = X + X.T - np.diag(np.diag(X))
+    
+    # Reinstate df
+    df = pd.DataFrame(X, columns = df.columns, index = df.index)
+    #--------------------------------------------------------------------------
+    
     plt.pcolor(df)
     
     plt.yticks(np.arange(0.5, len(df.index), 1), df.index)
@@ -285,11 +304,11 @@ for error in Errors:
     # Loop over data dimensions and create text annotations.
     for i in range(len(df.index)):
         for j in range(len(df.columns)):
-            if round(df.iloc[j,i],2) > 0.9:
-                text = plt.text(j+0.5, i+0.5, round(df.iloc[j,i],2),
+            if round(df.iloc[i,j],2) > 0.9:
+                text = plt.text(j+0.5, i+0.5, round(df.iloc[i,j],2),
                                ha="center", va="center", color="k", fontsize='small')#, transform = ax.transAxes)
             else:
-                text = plt.text(j+0.5, i+0.5, round(df.iloc[j,i],2),
+                text = plt.text(j+0.5, i+0.5, round(df.iloc[i,j],2),
                                ha="center", va="center", color="w", fontsize='small')#, transform = ax.transAxes)
                     
     

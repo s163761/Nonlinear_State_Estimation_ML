@@ -53,7 +53,7 @@ folder_data = r'output_files\Figures_Singular_296'
 
 # plot_ErrorMap = True
 
-def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
+def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=False):
     # Understanding input
     # EQs
     num_in = EQ_IN_OUT[0]
@@ -64,7 +64,7 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
     df_Basis = pd.DataFrame(columns = ['SubVec_Len', 'SubVec_Step', 'IN_EQs', 'OUT_EQs', 'IN_Nodes', 'OUT_Nodes'])
     df_Error = pd.DataFrame(index = ['RMSE', 'SMSE', 'MAE', 'MAPE', 'TRAC'])
     df_ErrorMap_idx = 0
-    #%%
+    #%% Load DATA
     # r=root, d=directories, f = files
     for rdirs, dirs, files in os.walk(folder_data):
         #print('--------------------------------------------------------------------')
@@ -121,7 +121,7 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
                     
             
                 
-                    
+    # Is DATA unique??                
     if unique_cols(df_Basis)[2] == True:
         status_train ='All same training inputs'
         train = 'Same'
@@ -195,12 +195,18 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
     plt.close()
     
     #%% Plot ErrorMap
+    
+    #Initialize Choose error type
+    #ID_error = 0
+    #print(ID_error)
+    error_text = ['RMSE', 'SMSE', 'MAE', 'MAPE' , 'TRAC'][ID_error]
+    
     if plot_ErrorMap:
         plt.figure(figsize =(8, 7))
         plt.pcolor(df_ErrorMap.values.tolist())
         plt.yticks(np.arange(0.5, len(df_ErrorMap.index), 1), df_ErrorMap.index)
         plt.xticks(np.arange(0.5, len(df_ErrorMap.columns), 1), df_ErrorMap.columns)
-        plt.colorbar(label='TRAC Mean')
+        plt.colorbar(label=f'{error_text} Mean')
         
         # Lines
         plt.axvline(x=4, ls='--', linewidth=1, color='black')
@@ -215,20 +221,20 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
         # Loop over data dimensions and create text annotations.
         for i in range(len(df_ErrorMap.index)):
             for j in range(len(df_ErrorMap.columns)):
-                if round(df_ErrorMap.iloc[j,i],2) > 0.8:
-                    text = plt.text(j+0.5, i+0.5, round(df_ErrorMap.iloc[j,i],2),
+                if round(df_ErrorMap.iloc[i,j],2) > 0.8:
+                    text = plt.text(j+0.5, i+0.5, round(df_ErrorMap.iloc[i,j],2),
                                    ha="center", va="center", color="k", fontsize='small')#, transform = ax.transAxes)
                 else:
-                    text = plt.text(j+0.5, i+0.5, round(df_ErrorMap.iloc[j,i],2),
+                    text = plt.text(j+0.5, i+0.5, round(df_ErrorMap.iloc[i,j],2),
                                    ha="center", va="center", color="w", fontsize='small')#, transform = ax.transAxes)
                 
         
-        plt.suptitle( f'Error Heat Map - IN: {num_in}, OUT: {num_out} \n TRAC Error' )
+        plt.suptitle( f'Error Heat Map - IN: {num_in}, OUT: {num_out} \n {error_text} Error' )
         plt.xlabel('Testing Nodes')
         plt.ylabel('Training Nodes')
         #plt.show()
         
-        plt.savefig(os.path.join(folder_data, f'ErrorMap_train{train}_IN{num_in}_OUT{num_out}.png'))
+        plt.savefig(os.path.join(folder_data, f'ErrorMap_{error_text}_train{train}_IN{num_in}_OUT{num_out}.png'))
         #plt.close()
         
         df_ErrorMap.to_pickle(folder_data + '/00_ErrorMap.pkl') 
@@ -259,7 +265,7 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
         
         #for i in [0,1,2,3,4]:  --> ['RMSE', 'SMSE', 'MAE', 'MAPE' , 'TRAC']      
             #print(mean(sum(df_Error[true_idx].values.tolist()[4], [])))
-        df_map[f'Pred_{prediction_node}'][in_node] = mean(sum(df_Error[true_idx].values.tolist()[4], []))
+        df_map[f'Pred_{prediction_node}'][in_node] = mean(sum(df_Error[true_idx].values.tolist()[ID_error], []))
             
     df_map.to_pickle(folder_data + f'/00_HeatMap_results_{prediction_node}.pkl') 
     
@@ -269,7 +275,8 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], plot_ErrorMap=False):
 
 Struc_Nodes = [20, 21, 22, 23, 30, 31, 32, 33, 40, 41, 42, 43]
 
-for Node in Struc_Nodes:
-    GenError(Node, EQ_IN_OUT=[5,296], plot_ErrorMap=False)
+for i in [0,1,2,3,4]:
+    for Node in Struc_Nodes:
+        GenError(Node, EQ_IN_OUT=[5,296], ID_error=i, plot_ErrorMap=False)
 #%%
-GenError(20, EQ_IN_OUT=[5,296], plot_ErrorMap=True)
+    GenError(20, EQ_IN_OUT=[5,296], ID_error=i, plot_ErrorMap=True)

@@ -38,13 +38,19 @@ energy_thr = 0.01 # Larger values are non-linear
 
 plt.figure()
 
-for i in range(LN_nodes.shape[0]):
+nonlinear_elements = 0; linear_elements = 0
+for i in range(LN_nodes.shape[0]): # EQ
     for j in range(len(LN_nodes[0])): # 2 in each element (21 elements)
         node_0 = LN_nodes[i][j][0]
         node_1 = LN_nodes[i][j][1]
         
         energy_0 = LN_energy[i][j][0]
         energy_1 = LN_energy[i][j][1]
+        
+        if energy_0 > energy_thr or energy_1 > energy_thr:
+            nonlinear_elements += 1
+        else:
+            linear_elements += 1
         
         res_dif_0 = np.abs(LN_res_def[i][j][0])
         res_dif_1 = np.abs(LN_res_def[i][j][1])
@@ -65,12 +71,22 @@ plt.axvline(energy_thr, linewidth=1, linestyle='--', c='k')
    
 #%% Counting
 
+# Row rount
+row_Ns = (df_LN == 'N').sum(axis=1)
+plt.figure()
+plt.plot(row_Ns)
+plt.grid()
+
+
 num_L = (df_LN.values == 'L').sum()
 num_N = (df_LN.values == 'N').sum()
 num_T = num_L + num_N
 
-print(f'L/N: {num_L}/{num_N}')
-print(f'Rat L/N: {round(num_L/num_T,4)}/{round(num_N/num_T,4)}')
+num_T_el = nonlinear_elements + linear_elements
+
+print(f'L/N: {num_L}/{num_N} -- ({round(num_L/num_T,4)}/{round(num_N/num_T,4)})')
+print(f'L/N EL: {linear_elements}/{nonlinear_elements} -- ({round(linear_elements/num_T_el,4)}/{round(nonlinear_elements/num_T_el,4)})')
+
 
 #%%
 df_LN.to_pickle(folder_structure + "/00_LN_Envalope.pkl") 
