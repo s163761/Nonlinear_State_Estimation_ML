@@ -32,7 +32,7 @@ LN_res_def = Index_Results['LN_Res_Def']
 
 struc_nodes = Structure['Nodes'][0]
 
-df_LN = pd.DataFrame('L', columns=struc_nodes, index = Index_Results.index)
+df_LN = pd.DataFrame(0, columns=struc_nodes, index = Index_Results.index)
 #df_LN = pd.DataFrame(0, columns=struc_nodes, index = Index_Results.index)
 
 energy_thr = 0.01 # Larger values are non-linear
@@ -59,7 +59,7 @@ for i in range(LN_nodes.shape[0]): # EQ
         # End point 0
         if energy_0 > energy_thr:
             #df_LN[node_0][i] = 'N'
-            if isinstance(df_LN[node_0][i], str):
+            if df_LN[node_0][i] == 0: #isinstance(df_LN[node_0][i], str):
                 df_LN[node_0][i] = energy_0
             else:
                 df_LN[node_0][i] = max(df_LN[node_0][i], energy_0)
@@ -72,7 +72,7 @@ for i in range(LN_nodes.shape[0]): # EQ
         # End point 1
         if energy_1 > energy_thr:
             #df_LN[node_1][i] = 'N'
-            if isinstance(df_LN[node_1][i], str):
+            if df_LN[node_1][i] == 0: #isinstance(df_LN[node_1][i], str):
                 df_LN[node_1][i] = energy_1
             else:
                 df_LN[node_1][i] = max(df_LN[node_1][i], energy_1)
@@ -86,18 +86,23 @@ plt.grid()
 plt.xlabel('Energy')
 plt.ylabel('Elasic deformation (residual rotation)')
 plt.axvline(energy_thr, linewidth=1, linestyle='--', c='k')
-   
+
+#%% Save
+df_LN.to_pickle(folder_structure + "/00_LN_Envalope.pkl")
+
+#%% Load
+df_LN = pd.read_pickle( os.path.join(folder_structure + "/00_LN_Envalope.pkl") )
 #%% Counting
 
 # Row rount
-row_Ns = (df_LN != 'L').sum(axis=1)
+row_Ns = (df_LN != 0).sum(axis=1)
 plt.figure()
 plt.plot(row_Ns)
 plt.grid()
 
 
-num_L = (df_LN.values == 'L').sum()
-num_N = (df_LN.values != 'L').sum()
+num_L = (df_LN.values == 0).sum()
+num_N = (df_LN.values != 0).sum()
 num_T = num_L + num_N
 
 num_T_el = nonlinear_elements + linear_elements
@@ -106,11 +111,14 @@ print(f'L/N: {num_L}/{num_N} -- ({round(num_L/num_T,4)}/{round(num_N/num_T,4)})'
 print(f'L/N EL: {linear_elements}/{nonlinear_elements} -- ({round(linear_elements/num_T_el,4)}/{round(nonlinear_elements/num_T_el,4)})')
 
 
-#%% Save
-df_LN.to_pickle(folder_structure + "/00_LN_Envalope.pkl")
+#%% Find higest energy in nide 23
 
-#%% Load
-df_LN = pd.read_pickle( os.path.join(folder_structure + "/00_LN_Envalope.pkl") )  
+df_test = df_LN.replace('L', 0)
+df_test = df_test[[23, 22, 32, 42]]
+
+df_test.sort_values(by=[23], inplace=True)
+
+print(df_test.tail(10).index)  
 
 sys.exit()
 # Results from Damage Index
