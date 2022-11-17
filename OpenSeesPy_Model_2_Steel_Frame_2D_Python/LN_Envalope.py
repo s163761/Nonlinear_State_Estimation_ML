@@ -120,6 +120,73 @@ df_test.sort_values(by=[23], inplace=True)
 
 print(df_test.tail(10).index)  
 
+#%% Getting Lin/NonLin Nodes
+df_list = pd.DataFrame([], columns = df_test.columns, index = ['L', 'N'])
+
+for i in df_test.columns:
+    L_val = df_test[i][df_test[i] == 0].shape[0]
+    N_val = df_test[i][df_test[i] < 0.04].shape[0] - L_val
+    
+    df_list[i]['L'] = df_test[i][df_test[i] == 0].index.tolist()
+    N_list = df_test[i][df_test[i] < 0.04].index.tolist()
+    for k in df_list[i]['L']:
+        N_list.remove(k)
+        
+    df_list[i]['N'] = N_list
+    
+    print(f'Node {i}:', L_val, N_val)
+    #print('Lin EQs \n', df_list[i]['L'])
+    #print('NLin EQs \n', df_list[i]['N'])
+    #print()
+
+#%% Remove from 23 - L
+
+for i in df_list[22]['L'] + df_list[32]['L']:
+    
+    if i in df_list[23]['L']:
+        df_list[23]['L'].remove(i)
+        
+for j in df_list.columns:
+    
+    print(f'Node {j}: ', len(df_list[j]['L']), len(df_list[j]['N']))
+    
+#%% Remove from 42 - L
+
+for i in df_list[23]['L']:
+    
+    if i in df_list[42]['L']:
+        df_list[42]['L'].remove(i)
+        
+for j in df_list.columns:
+    
+    print(f'Node {j}: ', len(df_list[j]['L']), len(df_list[j]['N']))
+    
+    
+#%% Remove from 23 - N
+
+for i in df_list[22]['N'] + df_list[32]['N']:
+    
+    if i in df_list[23]['N']:
+        df_list[23]['N'].remove(i)
+        
+for j in df_list.columns:
+    
+    print(f'Node {j}: ', len(df_list[j]['L']), len(df_list[j]['N']))
+    
+#%% Remove from 42 - N
+
+for i in df_list[23]['N']:
+    
+    if i in df_list[42]['N']:
+        df_list[42]['N'].remove(i)
+        
+for j in df_list.columns:
+    
+    print(f'Node {j}: ', len(df_list[j]['L']), len(df_list[j]['N']))
+
+#%%
+df_list.to_pickle(folder_structure + "/00_EQ_List.pkl")
+
 sys.exit()
 # Results from Damage Index
 #df.to_csv(output_directory + r'/00_Index_Results.csv')  # export dataframe to cvs
