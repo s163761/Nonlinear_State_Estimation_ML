@@ -108,7 +108,7 @@ folder_accs = r'output_files\ACCS'
 
 folder_structure = r'output_files'
 
-folder_figure_save = r'output_files\Figures_Singular_296'
+folder_figure_save = r'output_files\Figures_Singular_296_2'
 
 #%% Load Structure
 Structure = pd.read_pickle( os.path.join(folder_structure, '00_Structure.pkl') )
@@ -747,7 +747,10 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         MAE = (abs(y_pred - y_true)).mean()
         MAPE = (abs((y_pred - y_true)/y_true)).mean()*100
         
-        TRAC = ( np.dot(y_pred.T,y_true)**2 / (np.dot(y_true.T,y_true)*np.dot(y_pred.T,y_pred)) )[0][0]
+        TRAC = np.dot(y_pred.T,y_true)**2 / (np.dot(y_true.T,y_true)*np.dot(y_pred.T,y_pred))
+        #print(TRAC)
+        TRAC = TRAC[0][0]
+        #print(TRAC)
         # Dustance    
         #DIST = ((y_pred - y_true)**2).sum() **.5
         #DISTN = ((y_pred/y_true - 1)**2).sum() **.5
@@ -771,11 +774,14 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         columns.append(IDss + f'_{load_Nodes_Y[0]}')
     
     df_error = pd.DataFrame(columns = columns, index = ['RMSE', 'SMSE', 'MAE','MAPE', 'TRAC'])
+    df_values = pd.DataFrame(columns = ['T', 'TR', 'P'], index = load_IDss)
     
     print('Plotting Routine')
     print('------------------------------------------------- \n')
     
     for i in df_Xs_list.index.tolist():
+        #df_values = pd.DataFrame(columns = ['True', 'True_Reduced', 'Predicted'], index = [0])
+        
         Xs_list = df_Xs_list[0][i]
         
         mus_EQ = model.predict(Xs_list)[0]
@@ -791,11 +797,18 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         node_head = load_Nodes_Y[0] # Only one node : 32
         
         # True
-        acc = df_ZYs[node_head]['ACCS'][i]    
+        acc = df_ZYs[node_head]['ACCS'][i]
         x_acc = np.arange(0,len(acc))*0.02
         
         ax[0].plot(x_acc, acc, 
-                 alpha=0.3, linewidth=3, label='True')
+                  alpha=0.3, linewidth=3, label='True')
+        
+        #acc_reduced = acc[length_subvec-1:len(acc):length_step]
+        # x_acc_reduced = (np.arange(0,len(acc_reduced)) *length_step*0.02) + (length_subvec*0.02)
+        
+        # ax[0].plot(x_acc_reduced, acc_reduced, 
+        #          alpha=0.3, linewidth=3, label='True')
+        
         
         
         #SampEn_acc = DamageTools.SampEn(acc, 2, 0.2*np.std(acc))
@@ -807,7 +820,10 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         sigma_i_temp = sigma_iEQ
         
         ax[0].plot(x_temp, mus_temp, 
-                 alpha=0.8, label='Predicted')
+                 alpha=0.8,linewidth=1, label='Predicted')
+        
+        # ax[0].plot(x_acc, acc, 
+        #           alpha=0.8, linewidth=1, label='True')
         
         #SampEn_mus = DamageTools.SampEn(mus_temp, 2, 0.2*np.std(mus_temp))
         
@@ -834,7 +850,7 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
                      f' $\sigma^2_k$ = {ker_var}, $\u03C4^2_k$ = {ker_lengh_scale}, $\sigma^2_\epsilon$ = {model_noise} \n' +
                      f' Input: {len(load_IDs)}, Nodes {load_Nodes_X} \n Output: {len(load_IDss)}, Nodes {load_Nodes_Y}', 
                         x=0, y=0.97, ha='left', va='bottom', fontsize=10)
-        model_optimizer
+        #model_optimizer
         plt.xlabel('time [s]')
         fig.tight_layout()
         #plt.xlim(2000,3000)
@@ -848,16 +864,16 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         MAE = []
         MAPE = []
         TRAC = []
-        for i in range(len(mus_temp)):
-            y_true = np.array(acc[length_subvec:len(acc):length_step][:i]).reshape(-1,1)
-            y_pred = mus_temp[:i].reshape(-1,1)
-            
-            RM, SM, MA, MP, TR = errors(y_true, y_pred)
-            RMSE.append(RM)
-            SMSE.append(SM)
-            MAE.append(MA)
-            MAPE.append(MP)
-            TRAC.append(TR)
+        # for i in range(len(mus_temp)):
+        y_true = np.array(acc[length_subvec-1:len(acc):length_step]).reshape(-1,1)
+        y_pred = mus_temp.reshape(-1,1)
+        
+        RM, SM, MA, MP, TR = errors(y_true, y_pred)
+        RMSE.append(RM)
+        SMSE.append(SM)
+        MAE.append(MA)
+        MAPE.append(MP)
+        TRAC.append(TR)
               
         df_error[f'{int_to_str3([idx])[0]}_{load_Nodes_Y[0]}']['RMSE'] = RMSE[-1]
         df_error[f'{int_to_str3([idx])[0]}_{load_Nodes_Y[0]}']['SMSE'] = SMSE[-1]
@@ -899,10 +915,13 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         ax[1].grid()
         ax[1].legend()
         
-        if model_optimizer.status.find ('onverged') == -1:
-            model_status = 'Failed'
+        if optimize_model == 1:
+            if model_optimizer.status.find ('onverged') == -1:
+                model_status = 'Failed'
+            else:
+                model_status = 'Converged'
         else:
-            model_status = 'Converged'
+            model_status = 'Not optimized'
         
         ax[1].set_title(f'Opt. Status: {model_status}, Error: RMSE = {round(RMSE[-1],2)}, SMSE = {round(SMSE[-1],2)}, MAE = {round(MAE[-1],2)}, MAPE = {round(MAPE[-1],2)}, TRAC = {round(TRAC[-1],2)}', 
                      x=0, y=0.97, ha='left', va='bottom', fontsize=10)   
@@ -912,6 +931,14 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         plt.savefig(os.path.join(folder_figure_save,sub_folder_plots,
                                  f'Predict_ACC_EQ{int_to_str3([idx])[0]}_l{length_subvec}_step{length_step}_node{load_Nodes_Ys[0]}_time{start_time_name}.png'))
         plt.close()
+        
+        
+        # Save all Values in DF
+        df_values['T'][int_to_str3([idx])[0]] = acc
+        df_values['TR'][int_to_str3([idx])[0]] = y_true.tolist()
+        df_values['P'][int_to_str3([idx])[0]] = y_pred.tolist()
+        
+        
         
     
     #%% OLD (Shift in time for large number of outputs...)
@@ -992,16 +1019,16 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
                 MAE = []
                 MAPE = []
                 TRAC = []
-                for i in range(len(mus_temp)):
-                    y_true = np.array(acc[length_subvec:len(acc):length_step][:i]).reshape(-1,1)
-                    y_pred = mus_temp[:i].reshape(-1,1)
-                    
-                    RM, SM, MA, MP, TR = errors(y_true, y_pred)
-                    RMSE.append(RM)
-                    SMSE.append(SM)
-                    MAE.append(MA)
-                    MAPE.append(MP)
-                    TRAC.append(TR)
+                # for i in range(len(mus_temp)):
+                y_true = np.array(acc[length_subvec-1:len(acc):length_step]).reshape(-1,1)
+                y_pred = mus_temp.reshape(-1,1)
+                
+                RM, SM, MA, MP, TR = errors(y_true, y_pred)
+                RMSE.append(RM)
+                SMSE.append(SM)
+                MAE.append(MA)
+                MAPE.append(MP)
+                TRAC.append(TR)
                       
                 df_error[f'{int_to_str3([idx])[0]}_{load_Nodes_Y[0]}']['RMSE'] = RMSE[-1]
                 df_error[f'{int_to_str3([idx])[0]}_{load_Nodes_Y[0]}']['SMSE'] = SMSE[-1]
@@ -1069,6 +1096,7 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
     #unpickled_df = pd.read_pickle("./dummy.pkl")
     
     df_error.to_pickle( os.path.join(folder_figure_save,sub_folder_plots, '00_Error.pkl')  )
+    df_values.to_pickle( os.path.join(folder_figure_save,sub_folder_plots, '00_Values.pkl')  )
     
     #%% Time - toc
     global_tic_1 = time.time()
@@ -1153,15 +1181,58 @@ if False:
                 Test_par)
 
 
+
+
+#%% Open okl file
+
+# path = r'C:\Users\s163761\Documents\GitHub\Thesis_Nonlinear-Damage-Detection\OpenSeesPy_Model_2_Steel_Frame_2D_Python\output_files\Same_Pred\Pred_node23_IN5_OUT5_Time2022-11-21_17-12-08'
+
+# unpickled_df = pd.read_pickle(os.path.join(path, '00_Values.pkl'))
+
+
+# sys.exit()
+
+# df_values = pd.DataFrame(columns = ['TR', 'P'])
+
+# #df_values['T'] = np.array(unpickled_df['True'][0])
+# df_values['TR'] = np.array(unpickled_df['True_Reduced'][0])
+# df_values['P'] = np.array(unpickled_df['Predicted'][0])
+# #-----
+# plt.figure()
+
+# #plt.plot(unpickled_df['True'][0], label='T')
+# plt.plot(unpickled_df['TR'][0], label='TR', alpha=0.8)
+# plt.plot(unpickled_df['Predicted'][0], label='P', alpha=0.4)
+# plt.xlim([2000,2500])
+
+# plt.legend()
+# plt.grid()
+
+# sys.exit()
 #%% RUN Analysis
+
+# for i in [23, 33, 43]:
+#     load_Nodes_X = [23] #[load_Nodes_X_el]
+#     load_Nodes_Y = [i]
+#     print(load_Nodes_X, load_Nodes_Y)
+    
+#     load_IDs =['052', '086', '149', '182', '247']
+#     load_IDss = load_IDs
+    
+#     GPR(W_par=[length_subvec, length_step], 
+#             Ker_par=[sigma2_ks, tau2_ks, sigma2_error], 
+#             Train_par=[load_IDs, load_Nodes_X, load_Nodes_Y], 
+#             Test_par=[load_IDss, load_Nodes_X, load_Nodes_Y])
+
+# sys.exit()
 
 #------------------------------------------------------------------------------ 
 Diff_Nodes = [20, 21, 22, 23, 30, 31, 32, 33, 40, 41, 42, 43]
 
-for load_Nodes_X_el in [43]:
-    for load_Nodes_Y_el in [33, 40, 41, 42, 43]: # Pred_Node
+for load_Nodes_X_el in Diff_Nodes:
+    for load_Nodes_Y_el in Diff_Nodes: # Pred_Node
     
-        load_Nodes_X = [43] #[load_Nodes_X_el]
+        load_Nodes_X = [load_Nodes_X_el]
         load_Nodes_Y = [load_Nodes_Y_el]
         print(load_Nodes_X, load_Nodes_Y)
         

@@ -123,12 +123,14 @@ print(df_test.tail(10).index)
 #%% Getting Lin/NonLin Nodes
 df_list = pd.DataFrame([], columns = df_test.columns, index = ['L', 'N'])
 
+N_threshold = 4
+
 for i in df_test.columns:
     L_val = df_test[i][df_test[i] == 0].shape[0]
-    N_val = df_test[i][df_test[i] < 0.04].shape[0] - L_val
+    N_val = df_test[i][df_test[i] < N_threshold].shape[0] - L_val
     
     df_list[i]['L'] = df_test[i][df_test[i] == 0].index.tolist()
-    N_list = df_test[i][df_test[i] < 0.04].index.tolist()
+    N_list = df_test[i][df_test[i] < N_threshold].index.tolist()
     for k in df_list[i]['L']:
         N_list.remove(k)
         
@@ -164,7 +166,7 @@ for j in df_list.columns:
     
 #%% Remove from 23 - N
 
-for i in df_list[22]['N'] + df_list[32]['N']:
+for i in df_list[22]['N']:# + df_list[32]['N']:
     
     if i in df_list[23]['N']:
         df_list[23]['N'].remove(i)
@@ -173,18 +175,38 @@ for j in df_list.columns:
     
     print(f'Node {j}: ', len(df_list[j]['L']), len(df_list[j]['N']))
     
-#%% Remove from 42 - N
+#%% Remove from 22 + 32 + 42 - N
 
 for i in df_list[23]['N']:
     
-    if i in df_list[42]['N']:
+    if i in df_list[42]['N'] :
         df_list[42]['N'].remove(i)
+        
+    if i in df_list[32]['N'] :
+        df_list[32]['N'].remove(i)
+        
+    if i in df_list[22]['N'] :
+        df_list[22]['N'].remove(i)
         
 for j in df_list.columns:
     
     print(f'Node {j}: ', len(df_list[j]['L']), len(df_list[j]['N']))
 
-#%%
+
+#%% Function
+def common_member(a, b):
+    result = [i for i in a if i in b]
+    return result
+
+
+
+
+common_temp = common_member(df_list[42]['N'], df_list[32]['N'])
+common_temp = common_member(common_temp, df_list[22]['N'])
+
+for i in [22, 32, 42]:
+    df_list[i]['N'] = common_temp
+#%% Save
 df_list.to_pickle(folder_structure + "/00_EQ_List.pkl")
 
 sys.exit()

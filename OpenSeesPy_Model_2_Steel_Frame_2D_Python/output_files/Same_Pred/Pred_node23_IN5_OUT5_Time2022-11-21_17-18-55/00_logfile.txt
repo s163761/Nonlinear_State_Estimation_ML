@@ -1,0 +1,155 @@
+Start time: 2022-11-21 17:18:55
+Sub-vector parameters: Length = 25, Step = 1
+Hyper-parameters: Scale_Factor = 1, Length_Factor = 1, Error_Factor = 0 
+
+Determine Kernel @ 2022-11-21 17:18:56
+Subvector length: 25
+Number of sensors: 1
+Duration [sec]: 0.0499 - [min]: 0.0008 - [hrs]: 0.0 
+
+Determine Model @ 2022-11-21 17:18:56
+Non-optimized model 
+Name : GP regression
+Objective : 12858.201648068483
+Number of Parameters : 3
+Number of Optimization Parameters : 3
+Updates : True
+Parameters:
+  [1mGP_regression.         [0;0m  |  value  |  constraints  |  priors
+  [1mrbf.variance           [0;0m  |    1.0  |      +ve      |        
+  [1mrbf.lengthscale        [0;0m  |    1.0  |      +ve      |        
+  [1mGaussian_noise.variance[0;0m  |    1.0  |      +ve      |         
+
+Duration [sec]: 27.2263 - [min]: 0.4538 - [hrs]: 0.0076 
+
+Plotting Routine
+------------------------------------------------- 
+
+[4;33mReloaded modules[24m: DamageTools[0m
+[23] [23]
+Start time: 2022-11-21 17:22:27
+Sub-vector parameters: Length = 25, Step = 1
+Hyper-parameters: Scale_Factor = 1, Length_Factor = 1, Error_Factor = 0 
+
+Determine Kernel @ 2022-11-21 17:22:27
+Subvector length: 25
+Number of sensors: 1
+Duration [sec]: 0.0101 - [min]: 0.0002 - [hrs]: 0.0 
+
+Determine Model @ 2022-11-21 17:22:27
+Non-optimized model 
+Name : GP regression
+Objective : 12858.201648068483
+Number of Parameters : 3
+Number of Optimization Parameters : 3
+Updates : True
+Parameters:
+  [1mGP_regression.         [0;0m  |  value  |  constraints  |  priors
+  [1mrbf.variance           [0;0m  |    1.0  |      +ve      |        
+  [1mrbf.lengthscale        [0;0m  |    1.0  |      +ve      |        
+  [1mGaussian_noise.variance[0;0m  |    1.0  |      +ve      |         
+
+Duration [sec]: 27.0493 - [min]: 0.4508 - [hrs]: 0.0075 
+
+Plotting Routine
+------------------------------------------------- 
+
+[[0.94475734]]
+0.9447573401899612
+[[0.96430006]]
+0.9643000571908991
+[[0.95407041]]
+0.9540704061121977
+[[0.93451915]]
+0.9345191504005624
+[[0.98597312]]
+0.9859731235003583
+End time: 102.5192 [s]
+-- [min]:  1.7087 [min]
+-- [hrs]:  0.0285 [hrs]
+
+[23] [33]
+Start time: 2022-11-21 17:24:09
+Sub-vector parameters: Length = 25, Step = 1
+Hyper-parameters: Scale_Factor = 1, Length_Factor = 1, Error_Factor = 0 
+
+Determine Kernel @ 2022-11-21 17:24:10
+Subvector length: 25
+Number of sensors: 1
+Duration [sec]: 0.0121 - [min]: 0.0002 - [hrs]: 0.0 
+
+Determine Model @ 2022-11-21 17:24:10
+Non-optimized model 
+Name : GP regression
+Objective : 13965.669806071177
+Number of Parameters : 3
+Number of Optimization Parameters : 3
+Updates : True
+Parameters:
+  [1mGP_regression.         [0;0m  |  value  |  constraints  |  priors
+  [1mrbf.variance           [0;0m  |    1.0  |      +ve      |        
+  [1mrbf.lengthscale        [0;0m  |    1.0  |      +ve      |        
+  [1mGaussian_noise.variance[0;0m  |    1.0  |      +ve      |         
+
+Duration [sec]: 27.6396 - [min]: 0.4607 - [hrs]: 0.0077 
+
+Plotting Routine
+------------------------------------------------- 
+
+[[0.94498539]]
+0.9449853856143916
+[[0.95619184]]
+0.9561918445714748
+[[0.95391296]]
+0.9539129606925646
+[[0.94550331]]
+0.9455033078040195
+[[0.98826141]]
+0.9882614081777958
+End time: 103.8041 [s]
+-- [min]:  1.7301 [min]
+-- [hrs]:  0.0288 [hrs]
+
+[23] [43]
+Start time: 2022-11-21 17:25:53
+Sub-vector parameters: Length = 25, Step = 1
+Hyper-parameters: Scale_Factor = 1, Length_Factor = 1, Error_Factor = 0 
+
+Determine Kernel @ 2022-11-21 17:25:54
+Subvector length: 25
+Number of sensors: 1
+Duration [sec]: 0.0101 - [min]: 0.0002 - [hrs]: 0.0 
+
+Determine Model @ 2022-11-21 17:25:54
+Non-optimized model 
+Name : GP regression
+Objective : 15295.45893016131
+Number of Parameters : 3
+Number of Optimization Parameters : 3
+Updates : True
+Parameters:
+  [1mGP_regression.         [0;0m  |  value  |  constraints  |  priors
+  [1mrbf.variance           [0;0m  |    1.0  |      +ve      |        
+  [1mrbf.lengthscale        [0;0m  |    1.0  |      +ve      |        
+  [1mGaussian_noise.variance[0;0m  |    1.0  |      +ve      |         
+
+Duration [sec]: 26.7825 - [min]: 0.4464 - [hrs]: 0.0074 
+
+Plotting Routine
+------------------------------------------------- 
+
+[[0.94357745]]
+0.9435774503560636
+[[0.96015854]]
+0.9601585367900757
+[[0.95263214]]
+0.9526321425077702
+[[0.94389203]]
+0.943892031341561
+[[0.98737672]]
+0.9873767194059052
+End time: 105.0651 [s]
+-- [min]:  1.7511 [min]
+-- [hrs]:  0.0292 [hrs]
+
+

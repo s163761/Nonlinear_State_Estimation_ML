@@ -1,0 +1,41 @@
+Start time: 2022-11-21 17:25:53
+Sub-vector parameters: Length = 25, Step = 1
+Hyper-parameters: Scale_Factor = 1, Length_Factor = 1, Error_Factor = 0 
+
+Determine Kernel @ 2022-11-21 17:25:54
+Subvector length: 25
+Number of sensors: 1
+Duration [sec]: 0.0101 - [min]: 0.0002 - [hrs]: 0.0 
+
+Determine Model @ 2022-11-21 17:25:54
+Non-optimized model 
+Name : GP regression
+Objective : 15295.45893016131
+Number of Parameters : 3
+Number of Optimization Parameters : 3
+Updates : True
+Parameters:
+  [1mGP_regression.         [0;0m  |  value  |  constraints  |  priors
+  [1mrbf.variance           [0;0m  |    1.0  |      +ve      |        
+  [1mrbf.lengthscale        [0;0m  |    1.0  |      +ve      |        
+  [1mGaussian_noise.variance[0;0m  |    1.0  |      +ve      |         
+
+Duration [sec]: 26.7825 - [min]: 0.4464 - [hrs]: 0.0074 
+
+Plotting Routine
+------------------------------------------------- 
+
+[[0.94357745]]
+0.9435774503560636
+[[0.96015854]]
+0.9601585367900757
+[[0.95263214]]
+0.9526321425077702
+[[0.94389203]]
+0.943892031341561
+[[0.98737672]]
+0.9873767194059052
+End time: 105.0651 [s]
+-- [min]:  1.7511 [min]
+-- [hrs]:  0.0292 [hrs]
+
