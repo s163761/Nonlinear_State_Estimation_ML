@@ -49,45 +49,46 @@ struc_nodes = Structure.Nodes[0]
 struc_periods = list(Structure.Periods[0])
 
 #%% Estimate Entropy
-df_SampEn = pd.DataFrame(0,columns = struc_nodes, index = Index_Results.index)
-
-# r=root, d=directories, f = files
-for rdirs, dirs, files in os.walk(folder_accs):
-    for file in files:
-        
-        # Load Ground Motions for X/Y
-        if rdirs == folder_accs and file.endswith("Accs.out"):
-            #print(os.path.join(rdirs, file))
-            #print(idx)
-            #print('Loading file: ',file)
+if False:
+    df_SampEn = pd.DataFrame(0,columns = struc_nodes, index = Index_Results.index)
+    
+    # r=root, d=directories, f = files
+    for rdirs, dirs, files in os.walk(folder_accs):
+        for file in files:
             
-            time_Accs = np.loadtxt( os.path.join(folder_accs, file) )
-            
-            if file[3:6][0] != str(0):
-                idx = int(file[3:6])
-            elif file[3:6][1] != str(0):
-                idx = int(file[4:6])
-            else:
-                idx = int(file[5:6])
+            # Load Ground Motions for X/Y
+            if rdirs == folder_accs and file.endswith("Accs.out"):
+                #print(os.path.join(rdirs, file))
+                #print(idx)
+                #print('Loading file: ',file)
+                
+                time_Accs = np.loadtxt( os.path.join(folder_accs, file) )
+                
+                if file[3:6][0] != str(0):
+                    idx = int(file[3:6])
+                elif file[3:6][1] != str(0):
+                    idx = int(file[4:6])
+                else:
+                    idx = int(file[5:6])
+                        
+                # GM = Index_Results['Ground motion'][idx]
+                # LF = Index_Results['Load factor'][idx]
+                # print('GM: ',GM ,'Loadfactor: ', LF)
+                print('EarthQuake ID: ', idx)
+                
+                
+                
+                # Load Accelerations in nodes X
+                for j in range(1,len(time_Accs[0])):
+                    #time = time_Accs[:,0]
+                    accs = time_Accs[:,j].tolist()
                     
-            # GM = Index_Results['Ground motion'][idx]
-            # LF = Index_Results['Load factor'][idx]
-            # print('GM: ',GM ,'Loadfactor: ', LF)
-            print('EarthQuake ID: ', idx)
-            
-            
-            
-            # Load Accelerations in nodes X
-            for j in range(1,len(time_Accs[0])):
-                #time = time_Accs[:,0]
-                accs = time_Accs[:,j].tolist()
+                    SampEn = DamageTools.SampEn(accs, 2, 0.2*np.std(accs))
+                    
+                    df_SampEn[struc_nodes[j-1]][idx] = SampEn
+                    
                 
-                SampEn = DamageTools.SampEn(accs, 2, 0.2*np.std(accs))
-                
-                df_SampEn[struc_nodes[j-1]][idx] = SampEn
-                
-            
-df_SampEn.to_pickle(folder_structure + "/00_SampEn.pkl")
+    df_SampEn.to_pickle(folder_structure + "/00_SampEn.pkl")
 #%% Load
 df_SampEn = pd.read_pickle( os.path.join(folder_structure, '00_SampEn.pkl') ) 
 
@@ -314,7 +315,7 @@ for error in Errors:
     
     plt.xticks(rotation = 45) # Rotates X-Axis Ticks by 45-degrees
     
-    plt.suptitle(f'Error Heat Map - OpenSees \n {error} Error' )
+    plt.suptitle(f'OpenSees Heat Map \n {error} Comparison' )
     plt.xlabel('Testing Nodes')
     plt.ylabel('Training Nodes')
     #plt.show()
