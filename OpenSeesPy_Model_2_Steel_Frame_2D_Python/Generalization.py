@@ -20,7 +20,7 @@ import pandas as pd
 import warnings
 warnings.simplefilter("ignore")
 
-import sys
+#import sys
 import os
 
 # Import time-keeping
@@ -41,7 +41,7 @@ def unique_cols(df):
     return (a[0] == a).all(0)
 
 #%% Folder structure
-folder_data = r'output_files\Figures_Singular_296'
+folder_data = r'output_files\Figures_Singular_296_2'
 
 
 #%% INPUTS
@@ -64,6 +64,8 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
     df_Basis = pd.DataFrame(columns = ['SubVec_Len', 'SubVec_Step', 'IN_EQs', 'OUT_EQs', 'IN_Nodes', 'OUT_Nodes'])
     df_Error = pd.DataFrame(index = ['RMSE', 'SMSE', 'MAE', 'MAPE', 'TRAC'])
     df_ErrorMap_idx = 0
+    
+    in_nodes = []
     #%% Load DATA
     # r=root, d=directories, f = files
     for rdirs, dirs, files in os.walk(folder_data):
@@ -110,6 +112,8 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
                     unpickled_df = pd.read_pickle(os.path.join(rdirs, file))
                     df_Basis = pd.concat([df_Basis, unpickled_df], axis=0, ignore_index=True)
                     #print('Basis loaded')
+                    #print(df_Basis)
+                    in_nodes.extend(unpickled_df['IN_Nodes'][0])
                     
                 elif file.endswith('Error.pkl'): 
                     
@@ -118,16 +122,22 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
                     df_Error = pd.concat([df_Error, unpickled_df['comb']], axis=1, ignore_index=True)
                     print('Errors loaded')
                     
-                    
-            
+    # Rename columns to input nodes                
+    #print(in_nodes)
+    #df_Error.set_axis(in_nodes, axis=1, inplace=True)
+       
                 
-    # Is DATA unique??                
-    if unique_cols(df_Basis)[2] == True:
+    # Is DATA unique?? 
+    if df_Basis.shape[0] > 1:               
+        if unique_cols(df_Basis)[2] == True:
+            status_train ='All same training inputs'
+            train = 'Same'
+        else:
+            status_train = 'Different training inputs'
+            train = 'Diff'
+    else:
         status_train ='All same training inputs'
         train = 'Same'
-    else:
-        status_train = 'Different training inputs'
-        train = 'Diff'
     
     
     #%%  BOX-PLOT
@@ -150,6 +160,8 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
         sensor_id = 1
         for sensor in df.columns.tolist():
             cur_sensor = list(df.columns)[sensor_id-1]
+            cur_sensor = in_nodes[sensor_id-1]
+            #print(cur_sensor)
             
             data = np.array(df[sensor][error]).reshape(-1,1)
             
@@ -189,6 +201,7 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
     fig.suptitle(f'Error for estimation of node {prediction_node} - {status_train} \n Input: {num_in}   Estimations: {num_out},  (mean)') #, fontsize=16)
     
     plt.xticks(rotation = 0) # Rotates X-Axis Ticks by 45-degrees
+    plt.xlabel('Training Nodes')
     #plt.tight_layout()
     
     plt.savefig(os.path.join(folder_data, f'GeneralError_train{train}_node{prediction_node}_IN{num_in}_OUT{num_out}.png'))
@@ -221,7 +234,7 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
         # Loop over data dimensions and create text annotations.
         for i in range(len(df_ErrorMap.index)):
             for j in range(len(df_ErrorMap.columns)):
-                if round(df_ErrorMap.iloc[i,j],2) > 0.8:
+                if round(df_ErrorMap.iloc[i,j],2) >  np.amax(df_ErrorMap.to_numpy())*0.8: #0.8:
                     text = plt.text(j+0.5, i+0.5, round(df_ErrorMap.iloc[i,j],2),
                                    ha="center", va="center", color="k", fontsize='small')#, transform = ax.transAxes)
                 else:

@@ -801,13 +801,13 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         x_acc = np.arange(0,len(acc))*0.02
         
         ax[0].plot(x_acc, acc, 
-                  alpha=0.3, linewidth=3, label='True')
+                  alpha=0.3, linewidth=3, label='True', color = 'tab:blue')
         
-        #acc_reduced = acc[length_subvec-1:len(acc):length_step]
-        # x_acc_reduced = (np.arange(0,len(acc_reduced)) *length_step*0.02) + (length_subvec*0.02)
+        acc_reduced = acc[length_subvec-1:len(acc):length_step]
+        x_acc_reduced = (np.arange(0,len(acc_reduced)) *length_step*0.02) + (length_subvec*0.02)
         
-        # ax[0].plot(x_acc_reduced, acc_reduced, 
-        #          alpha=0.3, linewidth=3, label='True')
+        ax[0].plot(x_acc_reduced, acc_reduced, 
+                  alpha=0.3, linewidth=2, label='True Red.', color = 'k')
         
         
         
@@ -820,7 +820,7 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         sigma_i_temp = sigma_iEQ
         
         ax[0].plot(x_temp, mus_temp, 
-                 alpha=0.8,linewidth=1, label='Predicted')
+                 alpha=0.8,linewidth=1, label='Predicted', color = 'tab:orange')
         
         # ax[0].plot(x_acc, acc, 
         #           alpha=0.8, linewidth=1, label='True')
@@ -1114,7 +1114,7 @@ Train_data, Test_data = random_str_list(Index_Results, Train_procent = .015)
 
 
 #%%
-a = r'C:\Users\s163761\Documents\GitHub\Thesis_Nonlinear-Damage-Detection\OpenSeesPy_Model_2_Steel_Frame_2D_Python\output_files\Figures_Singular_296\Pred_node20_IN5_OUT296_Time2022-11-07_17-36-36'
+a = r'output_files\Figures_Singular_296\Pred_node20_IN5_OUT296_Time2022-11-07_17-36-36'
 
 unpickled_df = pd.read_pickle(os.path.join(a, '00_Basis.pkl'))
 # Indicator if total time n
@@ -1229,8 +1229,8 @@ if False:
 #------------------------------------------------------------------------------ 
 Diff_Nodes = [20, 21, 22, 23, 30, 31, 32, 33, 40, 41, 42, 43]
 
-for load_Nodes_X_el in Diff_Nodes:
-    for load_Nodes_Y_el in Diff_Nodes: # Pred_Node
+for load_Nodes_X_el in [42]:
+    for load_Nodes_Y_el in [42, 43]: # Pred_Node
     
         load_Nodes_X = [load_Nodes_X_el]
         load_Nodes_Y = [load_Nodes_Y_el]
