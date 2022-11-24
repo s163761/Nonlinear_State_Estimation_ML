@@ -108,7 +108,7 @@ folder_accs = r'output_files\ACCS'
 
 folder_structure = r'output_files'
 
-folder_figure_save = r'output_files\Figures_Singular_296_2'
+folder_figure_save = r'output_files\Testing\test_steps'
 
 #%% Load Structure
 Structure = pd.read_pickle( os.path.join(folder_structure, '00_Structure.pkl') )
@@ -238,7 +238,7 @@ def random_str_list(Index_Results, Train_procent = 0.07):
 
 # # Overlaping parameter (number of new values in sub-vector)
 # length_step = 5
-# W_par=[length_subvec, length_step]
+# W_par=[length_subvec, length_step, length_step_test]
 
 
 # # Creation of kernel ----------------------------------------------------------
@@ -257,7 +257,7 @@ def random_str_list(Index_Results, Train_procent = 0.07):
 #%% Model Optimization Y/N
 optimize_model = 1
 #%% Gaussian Process Model for Regression
-def GPR(W_par=[25, 5], #[length_subvec, length_step], 
+def GPR(W_par=[25, 5, 1], #[length_subvec, , length_step_test], 
         Ker_par=[1, 1, 0], #[sigma2_ks, tau2_ks, sigma2_error],
         
         Train_par=[['182',  '086',  '247',  '149',  '052',  '094',  '250',  '138',  
@@ -285,6 +285,7 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
     # Creation of Ws
     length_subvec = W_par[0]
     length_step = W_par[1]
+    length_step_test = W_par[2]
     #print(f'Sub-vector parameters: Length = {length_subvec}, Step = {length_step}') MOVED
     
     # Creation of kernel (Hyper-parameters)
@@ -314,7 +315,7 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
     Transcript.start(os.path.join(folder_figure_save, sub_folder_plots, '00_logfile.txt'))
     # print("inside file")
     print(f'Start time: {start_time}')
-    print(f'Sub-vector parameters: Length = {length_subvec}, Step = {length_step}')
+    print(f'Sub-vector parameters: Length = {length_subvec}, Step = {length_step}, {length_step_test}')
     print(f'Hyper-parameters: Scale_Factor = {sigma2_ks}, Length_Factor = {tau2_ks}, Error_Factor = {sigma2_error} \n')
     # Transcript.stop()
     # print("outside file")
@@ -448,7 +449,7 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
     
                            
     # Testing - X* 
-    df_ZXs, df_ZYs = load_to_w(load_IDss, load_Nodes_Xs, load_Nodes_Ys, len_sub_vector=length_subvec , step_size=length_step)        
+    df_ZXs, df_ZYs = load_to_w(load_IDss, load_Nodes_Xs, load_Nodes_Ys, len_sub_vector=length_subvec , step_size=length_step_test)        
     
     Xs = df_ZXs[df_ZXs.columns[0]]['Z']
     if len(list(df_ZXs.columns)) > 1:
@@ -803,8 +804,8 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         ax[0].plot(x_acc, acc, 
                   alpha=0.3, linewidth=3, label='True', color = 'tab:blue')
         
-        acc_reduced = acc[length_subvec-1:len(acc):length_step]
-        x_acc_reduced = (np.arange(0,len(acc_reduced)) *length_step*0.02) + (length_subvec*0.02)
+        acc_reduced = acc[length_subvec-1:len(acc):length_step_test]
+        x_acc_reduced = (np.arange(0,len(acc_reduced)) *length_step_test*0.02) + (length_subvec*0.02)
         
         ax[0].plot(x_acc_reduced, acc_reduced, 
                   alpha=0.3, linewidth=2, label='True Red.', color = 'k')
@@ -814,8 +815,8 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         #SampEn_acc = DamageTools.SampEn(acc, 2, 0.2*np.std(acc))
         # Predict
         mus_temp = mus_EQ
-        x_temp = (np.arange(0,len(mus_temp)) *length_step*0.02) + (length_subvec*0.02)
-        #np.arange(length_subvec*0.02,mus_temp[-1],length_step)*0.02 
+        x_temp = (np.arange(0,len(mus_temp)) *length_step_test*0.02) + (length_subvec*0.02)
+        #np.arange(length_subvec*0.02,mus_temp[-1],length_step_test)*0.02 
         
         sigma_i_temp = sigma_iEQ
         
@@ -865,7 +866,7 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
         MAPE = []
         TRAC = []
         # for i in range(len(mus_temp)):
-        y_true = np.array(acc[length_subvec-1:len(acc):length_step]).reshape(-1,1)
+        y_true = np.array(acc_reduced).reshape(-1,1)
         y_pred = mus_temp.reshape(-1,1)
         
         RM, SM, MA, MP, TR = errors(y_true, y_pred)
@@ -1112,31 +1113,31 @@ def GPR(W_par=[25, 5], #[length_subvec, length_step],
 # Training data ---------------------------------------------------------------
 Train_data, Test_data = random_str_list(Index_Results, Train_procent = .015)
 
-
-#%%
 a = r'output_files\Figures_Singular_296\Pred_node20_IN5_OUT296_Time2022-11-07_17-36-36'
-
 unpickled_df = pd.read_pickle(os.path.join(a, '00_Basis.pkl'))
+
 # Indicator if total time n
 #load_IDs = Train_data # 0.015 --> 5
-load_IDs = unpickled_df['IN_EQs'][0]
+#load_IDs = unpickled_df['IN_EQs'][0]
+load_IDs = ['043', '056', '145', '289', '300']
 
 # Training - X                                                                                 
-load_Nodes_X = [21, 23] # Indicator of dimension d
+load_Nodes_X = [23] # Indicator of dimension d
 
 # Training - Y
-load_Nodes_Y = [22]
+load_Nodes_Y = [43]
 
 # Combine it all
 Train_par=[load_IDs, load_Nodes_X, load_Nodes_Y]
 
 
-#%%
+
 # Testing Data ----------------------------------------------------------------
 
 # Indicator if total time m
 #load_IDss = Test_data # 20
-load_IDss = unpickled_df['OUT_EQs'][0]
+#load_IDss = unpickled_df['OUT_EQs'][0]
+load_IDss = ['012', '277']
 
 # load_IDss = int_to_str3(Index_Results.index.tolist())
 # for i in load_IDs:
@@ -1159,7 +1160,8 @@ length_subvec = 25
 
 # Overlaping parameter (number of new values in sub-vector)
 length_step = 5
-W_par=[length_subvec, length_step]
+length_step_test = 1
+W_par=[length_subvec, length_step, length_step_test]
 
 
 # Creation of kernel ----------------------------------------------------------
@@ -1174,7 +1176,7 @@ sigma2_error = 0
 Ker_par=[sigma2_ks, tau2_ks, sigma2_error]
 
 
-if False:
+if True:
     GPR(W_par, 
                 Ker_par, 
                 Train_par, 
@@ -1182,7 +1184,7 @@ if False:
 
 
 
-
+sys.exit()
 #%% Open okl file
 
 # path = r'C:\Users\s163761\Documents\GitHub\Thesis_Nonlinear-Damage-Detection\OpenSeesPy_Model_2_Steel_Frame_2D_Python\output_files\Same_Pred\Pred_node23_IN5_OUT5_Time2022-11-21_17-12-08'
@@ -1219,7 +1221,7 @@ if False:
 #     load_IDs =['052', '086', '149', '182', '247']
 #     load_IDss = load_IDs
     
-#     GPR(W_par=[length_subvec, length_step], 
+#     GPR(W_par=[length_subvec, length_step, length_step_test], 
 #             Ker_par=[sigma2_ks, tau2_ks, sigma2_error], 
 #             Train_par=[load_IDs, load_Nodes_X, load_Nodes_Y], 
 #             Test_par=[load_IDss, load_Nodes_X, load_Nodes_Y])
@@ -1236,7 +1238,7 @@ for load_Nodes_X_el in [42]:
         load_Nodes_Y = [load_Nodes_Y_el]
         print(load_Nodes_X, load_Nodes_Y)
         
-        GPR(W_par=[length_subvec, length_step], 
+        GPR(W_par=[length_subvec, length_step, length_step_test], 
                 Ker_par=[sigma2_ks, tau2_ks, sigma2_error], 
                 Train_par=[load_IDs, load_Nodes_X, load_Nodes_Y], 
                 Test_par=[load_IDss, load_Nodes_X, load_Nodes_Y])
@@ -1253,7 +1255,7 @@ for i  in range(len(Diff_Nodes[:-3])):
     load_Nodes_Y = [Diff_Nodes[i]]
     print(load_Nodes_X, load_Nodes_Y)
     
-    GPR(W_par=[length_subvec, length_step], 
+    GPR(W_par=[length_subvec, length_step, length_step_test], 
             Ker_par=[sigma2_ks, tau2_ks, sigma2_error], 
             Train_par=[load_IDs, load_Nodes_X, load_Nodes_Y], 
             Test_par=[load_IDss, load_Nodes_X, load_Nodes_Y])
