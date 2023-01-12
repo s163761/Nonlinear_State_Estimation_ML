@@ -42,6 +42,7 @@ def unique_cols(df):
 
 #%% Folder structure
 folder_data = r'output_files\Figures_Singular_296_2'
+folder_data = r'output_files\Figures_Singular_296_Red'
 
 
 #%% INPUTS
@@ -126,7 +127,8 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
     #print(in_nodes)
     #df_Error.set_axis(in_nodes, axis=1, inplace=True)
        
-                
+    print(df_Basis['IN_EQs'][0])     
+    print(len(df_Basis['OUT_EQs'][0]))       
     # Is DATA unique?? 
     if df_Basis.shape[0] > 1:               
         if unique_cols(df_Basis)[2] == True:
@@ -142,17 +144,21 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
     
     #%%  BOX-PLOT
     df = df_Error
+    df.drop(labels=['MAE', 'MAPE'], axis=0, inplace=True)
     # Plot bloxplot
-    fig, ax = plt.subplots(nrows=df.shape[0], ncols=1, figsize =(10, 10), sharex=True)
+    fig, ax = plt.subplots(nrows=df.shape[0], ncols=1, figsize =(7,6), sharex=True)
     
     
-    plot_right = 1
+    plot_right = 0
     
     len_error = len(df.index.tolist())-1
     len_sensor = len(df.columns.tolist()) + plot_right
     
-    error_id = 0
-    for error in df.index.tolist():
+    #error_id = 0
+    error_list0 = df.index.tolist()
+
+    for error_id in range(df.shape[0]):
+        error = error_list0[error_id]
         cur_error = list(df.index)[error_id]
         
         Data = np.array([]).reshape(-1,1)
@@ -161,18 +167,20 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
         for sensor in df.columns.tolist():
             cur_sensor = list(df.columns)[sensor_id-1]
             cur_sensor = in_nodes[sensor_id-1]
+            cur_sensor = ['1st', '2nd', '3rd'][sensor_id-1]
             #print(cur_sensor)
             
             data = np.array(df[sensor][error]).reshape(-1,1)
             
             if error_id == len_error:
                 ax[error_id].boxplot(data,widths=0.5, positions=[sensor_id], labels=[f'{cur_sensor}'])        
-                ax[error_id].set_ylabel(f'{cur_error}')
+                ax[error_id].set_ylabel(f'{cur_error}', fontweight='bold', fontsize = 14)
             else:
                 ax[error_id].boxplot(data,widths=0.5, positions=[sensor_id], labels=[' '])        
-                ax[error_id].set_ylabel(f'{cur_error}')
+                ax[error_id].set_ylabel(f'{cur_error}', fontweight='bold', fontsize = 14)
             
-            ax[error_id].text(x=(sensor_id-.5)/len_sensor, y=1, s=f'({round(data.mean(),2)})', va='bottom', ha='center', transform = ax[error_id].transAxes)
+            ax[error_id].text(x=(sensor_id-.5)/len_sensor, y=1, s=f'({round(data.mean(),2)})', fontsize=12,
+                              va='bottom', ha='center', transform = ax[error_id].transAxes)
             #ax[error_id].set_title('subplot 1')
             
             Data = np.append(Data,data, axis=0)
@@ -189,46 +197,69 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
                 ax[error_id].boxplot(Data,widths=0.5, positions=[sensor_id], labels=[' '])
             
             
-            ax[error_id].text(x=(sensor_id-.5)/len_sensor, y=1, s=f'({round(Data.mean(),2)})', va='bottom', ha='center', transform = ax[error_id].transAxes)
+            ax[error_id].text(x=(sensor_id-.5)/len_sensor, y=1, s=f'({round(Data.mean(),2)})', fontsize=12,
+                              va='bottom', ha='center', transform = ax[error_id].transAxes)
         
         
         ax[error_id].grid(axis='y')
+        ax[error_id].xaxis.set_tick_params(labelsize=14)
+        ax[error_id].yaxis.set_tick_params(labelsize=14)
         
-        error_id+=1
+        #error_id+=1
+     
         
+    if prediction_node == 23:
+        prediction_node0 = '1st'
+    elif prediction_node == 33:
+        prediction_node0 = '1st'
+    elif prediction_node == 43:
+        prediction_node0 = '3rd'
+     
     
     #ax[error_id-1].set_xlabel('XXX')
-    fig.suptitle(f'Error for estimation of node {prediction_node} - {status_train} \n Input: {num_in}   Estimations: {num_out},  (mean)') #, fontsize=16)
+    fig.suptitle(f'Error for estimation of {prediction_node0} floor \n Input: {num_in}   Estimations: {num_out},  (mean)',
+                 y = 1.0, fontweight='bold', fontsize = 16) #, fontsize=16)
     
     plt.xticks(rotation = 0) # Rotates X-Axis Ticks by 45-degrees
-    plt.xlabel('Training Nodes')
-    #plt.tight_layout()
+    plt.xlabel('Training Floor', fontsize = 16)
+    
+    plt.tight_layout()
     
     plt.savefig(os.path.join(folder_data, f'GeneralError_train{train}_node{prediction_node}_IN{num_in}_OUT{num_out}.png'))
-    plt.close()
+    #plt.close()
     
     #%% Plot ErrorMap
     
     #Initialize Choose error type
     #ID_error = 0
     #print(ID_error)
-    error_text = ['RMSE', 'SMSE', 'MAE', 'MAPE' , 'TRAC'][ID_error]
+    #error_text = ['RMSE', 'SMSE', 'MAE', 'MAPE' , 'TRAC'][ID_error]
+    error_text = ['RMSE', 'SMSE' , 'TRAC'][ID_error]
     
     if plot_ErrorMap:
-        plt.figure(figsize =(8, 7))
+        fig = plt.figure(figsize =(7,6))
+        ax = fig.add_subplot(111)
+        
         plt.pcolor(df_ErrorMap.values.tolist())
         plt.yticks(np.arange(0.5, len(df_ErrorMap.index), 1), df_ErrorMap.index)
         plt.xticks(np.arange(0.5, len(df_ErrorMap.columns), 1), df_ErrorMap.columns)
-        plt.colorbar(label=f'{error_text} Mean')
+        
+        plt.yticks(np.arange(0.5, len(df_ErrorMap.index), 1), ['1st', '2nd', '3rd'])
+        plt.xticks(np.arange(0.5, len(df_ErrorMap.columns), 1), ['1st', '2nd', '3rd'])
+        
+        cbar = plt.colorbar()
+        cbar.ax.tick_params(labelsize=14)
+        cbar.set_label(label=f'{error_text} Mean', fontsize=16)
         
         # Lines
-        plt.axvline(x=4, ls='--', linewidth=1, color='black')
-        plt.axvline(x=8, ls='--', linewidth=1, color='black')
+        if False:
+            plt.axvline(x=4, ls='--', linewidth=1, color='black')
+            plt.axvline(x=8, ls='--', linewidth=1, color='black')
+            
+            plt.axhline(y=4, ls='--', linewidth=1, color='black')
+            plt.axhline(y=8, ls='--', linewidth=1, color='black')
         
-        plt.axhline(y=4, ls='--', linewidth=1, color='black')
-        plt.axhline(y=8, ls='--', linewidth=1, color='black')
-        
-        plt.xticks(rotation = 45) # Rotates X-Axis Ticks by 45-degrees
+        plt.xticks(rotation = 0) # Rotates X-Axis Ticks by 45-degrees
         
         
         # Loop over data dimensions and create text annotations.
@@ -236,15 +267,20 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
             for j in range(len(df_ErrorMap.columns)):
                 if round(df_ErrorMap.iloc[i,j],2) >  np.amax(df_ErrorMap.to_numpy())*0.8: #0.8:
                     text = plt.text(j+0.5, i+0.5, round(df_ErrorMap.iloc[i,j],2),
-                                   ha="center", va="center", color="k", fontsize='small')#, transform = ax.transAxes)
+                                   ha="center", va="center", color="k", fontsize=14)#, transform = ax.transAxes)
                 else:
                     text = plt.text(j+0.5, i+0.5, round(df_ErrorMap.iloc[i,j],2),
-                                   ha="center", va="center", color="w", fontsize='small')#, transform = ax.transAxes)
+                                   ha="center", va="center", color="w", fontsize=14)#, transform = ax.transAxes)
                 
         
-        plt.suptitle( f'Error Heat Map - IN: {num_in}, OUT: {num_out} \n {error_text} Error' )
-        plt.xlabel('Testing Nodes')
-        plt.ylabel('Training Nodes')
+        plt.suptitle( f'Error Heat Map - IN: {num_in}, OUT: {num_out} \n {error_text} Error',
+                     y = 1.0, fontweight='bold', fontsize = 16)
+        
+        ax.set_xlabel('Prediction Floor' , fontsize = 16)
+        ax.xaxis.set_tick_params(labelsize=14)
+        ax.set_ylabel('Training Floor', fontsize = 16)
+        ax.yaxis.set_tick_params(labelsize=14)
+        plt.tight_layout()
         #plt.show()
         
         plt.savefig(os.path.join(folder_data, f'ErrorMap_{error_text}_train{train}_IN{num_in}_OUT{num_out}.png'))
@@ -262,9 +298,10 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
         return av
     
     nodes = [20, 21, 22, 23, 30, 31, 32, 33, 40, 41, 42, 43]
+    nodes = [23, 33, 43]
     
         
-    df_map = pd. DataFrame(columns = [f'Pred_{prediction_node}'], index = nodes)
+    df_map = pd. DataFrame(columns = [f'{prediction_node}'], index = nodes)
     
     
     for In_node in nodes:
@@ -278,7 +315,7 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
         
         #for i in [0,1,2,3,4]:  --> ['RMSE', 'SMSE', 'MAE', 'MAPE' , 'TRAC']      
             #print(mean(sum(df_Error[true_idx].values.tolist()[4], [])))
-        df_map[f'Pred_{prediction_node}'][in_node] = mean(sum(df_Error[true_idx].values.tolist()[ID_error], []))
+        df_map[f'{prediction_node}'][in_node] = mean(sum(df_Error[true_idx].values.tolist()[ID_error], []))
             
     df_map.to_pickle(folder_data + f'/00_HeatMap_results_{prediction_node}.pkl') 
     
@@ -287,9 +324,11 @@ def GenError(prediction_node=32, EQ_IN_OUT=[5,296], ID_error=4, plot_ErrorMap=Fa
 #%% RUN
 
 Struc_Nodes = [20, 21, 22, 23, 30, 31, 32, 33, 40, 41, 42, 43]
+Struc_Nodes = [23, 33, 43]
 
-for i in [0,1,2,3,4]:
+
+for i in [0, 1, 2]:
     for Node in Struc_Nodes:
         GenError(Node, EQ_IN_OUT=[5,296], ID_error=i, plot_ErrorMap=False)
 #%%
-    GenError(20, EQ_IN_OUT=[5,296], ID_error=i, plot_ErrorMap=True)
+    GenError(23, EQ_IN_OUT=[5,296], ID_error=i, plot_ErrorMap=True)
